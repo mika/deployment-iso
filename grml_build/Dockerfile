@@ -7,6 +7,9 @@ FROM --platform=linux/amd64 debian:bookworm-slim
 # old cached versions when the Dockerfile is built.
 ENV REFRESHED_AT 2025-01-22
 
+# HACK: enable SRV lookup on old apt versions
+RUN echo http 80/tcp > /etc/services
+
 # tools for building and testing
 RUN apt-get update && apt-get install --assume-yes --no-install-recommends \
   bc \
