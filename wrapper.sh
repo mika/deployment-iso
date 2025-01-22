@@ -23,43 +23,18 @@ wget -O "${outside_fai_config}/files/root/${puppet_key}/PUPPETLABS" http://apt.p
 
 # write apt sources
 source_list_path='etc/apt/sources.list.d/sipwise.list'
-repo_addr="deb https://deb.debian.org/debian bookworm main"
-echo "${repo_addr}" > "${outside_fai_config}${source_list_path}/SIPWISE"
-
-# install apt keyring
-keyring_file_name=sipwise-keyring-bootstrap.gpg
-keyring_path="files/etc/apt/trusted.gpg.d/${keyring_file_name}/SIPWISE"
-wget -O "${outside_fai_config}"files/etc/apt/trusted.gpg.d/${keyring_file_name}/SIPWISE https://deb.sipwise.com/spce/keyring/sipwise-keyring-bootstrap.gpg
+repo_addr="deb https://deb.sipwise.com/spce/mr12.5.1/ bookworm main"
+debian_bootstrap_url="https://debian.sipwise.com/debian/"
+echo "${repo_addr}" > "${outside_fai_config}files/${source_list_path}/SIPWISE"
 
 iso_image_name="grml-sipwise-${osversion}-$(date +%Y%m%d_%H%M%S).iso"
-#declare -a fai_debootstrap_opts=()
-#fai_debootstrap_opts+=('--exclude=info,tasksel,tasksel-data')
-# TODO: keyring during bootstrap
-#fai_debootstrap_opts+=("--keyring=${fai_config}${keyring_path}")
-
-# starting with Debian/bookworm we need merged-/usr
-# TODO: why aptitude? - probably unused
-#case "${osversion}" in
-#  buster|bullseye)
-#    fai_debootstrap_opts+=('--include=aptitude')
-#    #TODO: mmdebstrap automatic? fai_debootstrap_opts+=("--no-merged-usr")
-#    echo "Building for ${osversion}, not enabling merged-/usr"
-#    ;;
-#  *)
-#    fai_debootstrap_opts+=('--include=aptitude,usrmerge')
-#    echo "Building for ${osversion}, enabling merged-/usr"
-#    ;;
-#esac
-
 
 build_command=''
 build_command+=" cp -rv /grml/config/ /code/grml-live/"
 build_command+=" && GRML_NAME=grml64-small"
 build_command+=" CHROOT_OUTPUT=/root/grml_chroot"
-build_command+=" FAI_DEBOOTSTRAP='${osversion} https://deb.debian.org/debian'"
-#build_command+=" FAI_DEBOOTSTRAP_OPTS='${fai_debootstrap_opts[*]}'"
+build_command+=" FAI_DEBOOTSTRAP='${osversion} ${debian_bootstrap_url}'"
 build_command+=" LIVE_CONF=/code/grml-live/etc/grml/grml-live.conf"
-build_command+=" SCRIPTS_DIRECTORY=/code/grml-live/scripts"
 build_command+=" GRML_FAI_CONFIG=${fai_config}"
 build_command+=" ./grml-live"
 build_command+=" -s '${osversion}'"

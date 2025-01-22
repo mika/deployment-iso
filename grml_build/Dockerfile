@@ -5,7 +5,7 @@ FROM --platform=linux/amd64 debian:bookworm-slim
 # is updated with the current date. It will force refresh of all
 # of the base images and things like `apt-get update` won't be using
 # old cached versions when the Dockerfile is built.
-ENV REFRESHED_AT 2025-01-22
+ENV REFRESHED_AT 2025-01-22d
 
 # HACK: enable SRV lookup on old apt versions
 RUN echo http 80/tcp > /etc/services
@@ -51,21 +51,6 @@ RUN git clone -b 'zeha/minifai' --single-branch --depth 1 https://github.com/grm
 
 # addons
 RUN mkdir -p /code/grml-live/templates/boot/addons/
-
-RUN wget https://debian.sipwise.com/debian/pool/main/m/memtest86+/memtest86+_6.00-1_amd64.deb && \
-  dpkg -x memtest86+_6.00-1_amd64.deb /tmp/memtest86 && \
-  cp /tmp/memtest86/boot/memtest86+x64.bin /code/grml-live/templates/boot/addons/memtest86+x64.bin && \
-  cp /tmp/memtest86/boot/memtest86+x64.efi /code/grml-live/templates/boot/addons/memtest86+x64.efi && \
-  rm -rf /tmp/memtest86
-
-RUN wget -O /code/grml-live/templates/boot/addons/netboot.xyz.efi https://boot.netboot.xyz/ipxe/netboot.xyz.efi && \
-  wget -O /code/grml-live/templates/boot/addons/netboot.xyz.lkrn https://boot.netboot.xyz/ipxe/netboot.xyz.lkrn
-
-RUN wget http://ftp.de.debian.org/debian/pool/main/i/ipxe/ipxe_1.0.0+git-20190125.36a4c85-1_all.deb && \
-  dpkg -x ipxe_1.0.0+git-20190125.36a4c85-1_all.deb /tmp/ipxe && \
-  cp /tmp/ipxe/boot/ipxe.efi /code/grml-live/templates/boot/addons/ipxe.efi && \
-  cp /tmp/ipxe/boot/ipxe.lkrn /code/grml-live/templates/boot/addons/ipxe.lkrn && \
-  rm -rf /tmp/ipxe
 
 WORKDIR /code/grml-live
 
