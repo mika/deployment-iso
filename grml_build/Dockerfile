@@ -1,15 +1,16 @@
 # DOCKER_NAME=grml-build-bookworm
-FROM docker.mgm.sipwise.com/sipwise-bookworm:latest
+FROM debian:bookworm-slim
 
 # Important! Update this no-op ENV variable when this Dockerfile
 # is updated with the current date. It will force refresh of all
 # of the base images and things like `apt-get update` won't be using
 # old cached versions when the Dockerfile is built.
-ENV REFRESHED_AT 2024-06-10
+ENV REFRESHED_AT 2025-01-22
 
 # tools for building and testing
 RUN apt-get update && apt-get install --assume-yes --no-install-recommends \
   bc \
+  ca-certificates \
   bzip2 \
   dosfstools \
   fai-client \
@@ -44,7 +45,8 @@ RUN echo "SECURE_BOOT=disable ./grml-live -s bookworm -a amd64 -c GRMLBASE,SIPWI
 
 # base build tools
 WORKDIR /code/
-RUN git clone -b 'v0.47.7' --single-branch --depth 1 https://github.com/grml/grml-live
+#RUN git clone -b 'v0.47.7' --single-branch --depth 1 https://github.com/grml/grml-live
+RUN git clone --single-branch --depth 1 https://github.com/grml/grml-live
 RUN mkdir -p /code/grml-live/templates/boot/addons/ \
   /code/grml-live/etc/grml/fai/config/files/etc/apt/sources.list.d/sipwise.list/ \
   /code/grml-live/etc/grml/fai/config/files/etc/apt/trusted.gpg.d/sipwise-keyring.gpg/ \
