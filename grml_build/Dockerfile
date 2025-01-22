@@ -5,7 +5,7 @@ FROM --platform=linux/amd64 debian:bookworm-slim
 # is updated with the current date. It will force refresh of all
 # of the base images and things like `apt-get update` won't be using
 # old cached versions when the Dockerfile is built.
-ENV REFRESHED_AT 2025-01-22d
+ENV REFRESHED_AT 2025-01-22e
 
 # HACK: enable SRV lookup on old apt versions
 RUN echo http 80/tcp > /etc/services
@@ -19,11 +19,9 @@ RUN apt-get update && apt-get install --assume-yes --no-install-recommends \
   git \
   grml2usb \
   imagemagick \
-  isolinux \
   isomd5sum \
   jo \
   kmod \
-  memtest86+ \
   mmdebstrap \
   moreutils \
   mtools \
@@ -34,7 +32,6 @@ RUN apt-get update && apt-get install --assume-yes --no-install-recommends \
   socat \
   squashfs-tools \
   sudo \
-  syslinux \
   wget \
   xorriso
 
@@ -48,9 +45,6 @@ RUN echo "SECURE_BOOT=disable ./grml-live -s bookworm -a amd64 -c GRMLBASE,SIPWI
 WORKDIR /code/
 #RUN git clone -b 'v0.47.7' --single-branch --depth 1 https://github.com/grml/grml-live
 RUN git clone -b 'zeha/minifai' --single-branch --depth 1 https://github.com/grml/grml-live
-
-# addons
-RUN mkdir -p /code/grml-live/templates/boot/addons/
 
 WORKDIR /code/grml-live
 

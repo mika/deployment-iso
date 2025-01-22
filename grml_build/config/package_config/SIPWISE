@@ -41,6 +41,7 @@ locales
 lsof
 lsscsi
 mawk
+memtest86+
 mmdebstrap
 mount
 mtools
