@@ -51,7 +51,10 @@ echo "Finished execution of \$0"
 EOF
 chmod 775 "$(pwd)"/grml_build/adjust_fai.sh
 
-fai_config='/code/grml-live/etc/grml/fai/config'
+# old:
+#fai_config='/code/grml-live/etc/grml/fai/config'
+# new:
+fai_config='/code/grml-live/config/'
 keyring_path="${fai_config}/files/etc/apt/trusted.gpg.d/${keyring_file_name}/SIPWISE"
 puppet_key_path="${fai_config}/files/root/${puppet_key}/PUPPETLABS"
 iso_image_name="grml-sipwise-${osversion}-$(date +%Y%m%d_%H%M%S).iso"
@@ -90,9 +93,10 @@ build_command+=" && GRML_NAME=grml64-small"
 build_command+=" FAI_ARGS='--verbose'"
 build_command+=" FAI_DEBOOTSTRAP='${osversion} https://deb.debian.org/debian'"
 build_command+=" FAI_DEBOOTSTRAP_OPTS='${fai_debootstrap_opts[*]}'"
-build_command+=" LIVE_CONF=/code/grml-live/etc/grml/grml-live.conf"
+# FIXME ?
+#build_command+=" LIVE_CONF=/code/grml-live/etc/grml/grml-live.conf"
 build_command+=" SCRIPTS_DIRECTORY=/code/grml-live/scripts"
-build_command+=" GRML_FAI_CONFIG=/code/grml-live/etc/grml/fai"
+build_command+=" GRML_FAI_CONFIG=${fai_config}"
 build_command+=" ./grml-live"
 build_command+=" -s '${osversion}'"
 build_command+=" -a amd64"
