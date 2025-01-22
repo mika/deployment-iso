@@ -40,7 +40,7 @@ RUN apt-get update && apt-get install --assume-yes --no-install-recommends \
 RUN echo "SECURE_BOOT=disable ./grml-live -s bookworm -a amd64 -c GRMLBASE,SIPWISE,AMD64 -t /code/grml-live/templates/ -o /grml/ -r grml-sipwise -v 0.42" >/root/.bash_history && \
   echo "export LIVE_CONF=/code/grml-live/etc/grml/grml-live.conf" >>/root/.bash_history && \
   echo "export SCRIPTS_DIRECTORY=/code/grml-live/scripts"         >>/root/.bash_history && \
-  echo "export GRML_FAI_CONFIG=/code/grml-live/etc/grml/fai"      >>/root/.bash_history && \
+  echo "export GRML_FAI_CONFIG=/code/grml-live/config"            >>/root/.bash_history && \
   echo "cp /deployment-iso/grml_build/package_config/SIPWISE /code/grml-live/etc/grml/fai/config/package_config/SIPWISE" >>/root/.bash_history
 
 # base build tools
