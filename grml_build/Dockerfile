@@ -13,8 +13,6 @@ RUN apt-get update && apt-get install --assume-yes --no-install-recommends \
   ca-certificates \
   bzip2 \
   dosfstools \
-  fai-client \
-  fai-server \
   git \
   grml2usb \
   imagemagick \
@@ -23,7 +21,7 @@ RUN apt-get update && apt-get install --assume-yes --no-install-recommends \
   jo \
   kmod \
   memtest86+ \
-  mksh \
+  mmdebstrap \
   moreutils \
   mtools \
   pciutils \
@@ -46,7 +44,7 @@ RUN echo "SECURE_BOOT=disable ./grml-live -s bookworm -a amd64 -c GRMLBASE,SIPWI
 # base build tools
 WORKDIR /code/
 #RUN git clone -b 'v0.47.7' --single-branch --depth 1 https://github.com/grml/grml-live
-RUN git clone --single-branch --depth 1 https://github.com/grml/grml-live
+RUN git clone -b 'zeha/minifai' --single-branch --depth 1 https://github.com/grml/grml-live
 
 # addons
 RUN mkdir -p /code/grml-live/templates/boot/addons/
