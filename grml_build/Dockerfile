@@ -1,5 +1,5 @@
 # DOCKER_NAME=grml-build-bookworm
-FROM debian:bookworm-slim
+FROM --platform=linux/amd64 debian:bookworm-slim
 
 # Important! Update this no-op ENV variable when this Dockerfile
 # is updated with the current date. It will force refresh of all
