@@ -11,17 +11,27 @@ if [ "$(basename "$(pwd)")" != "deployment-iso" ] ; then
   exit 1
 fi
 
-source_list_path='etc/apt/sources.list.d/sipwise.list'
-mkdir -p "${source_list_path}"
-repo_addr="deb https://deb.debian.org/debian bookworm main"
-echo "${repo_addr}" > "${source_list_path}/SIPWISE"
+# old:
+#fai_config='/code/grml-live/etc/grml/fai/config'
+# new:
+fai_config='/code/grml-live/config/'
+outside_fai_config="${PWD}/grml_build/config/"
 
 # get the puppet public key, so no need to download it in deployment.sh
 puppet_key='puppet.gpg'
-wget -O "${puppet_key}" http://apt.puppetlabs.com/DEB-GPG-KEY-puppetlabs
+mkdir -p "${outside_fai_config}/files/root/${puppet_key}"
+wget -O "${outside_fai_config}/files/root/${puppet_key}/PUPPETLABS" http://apt.puppetlabs.com/DEB-GPG-KEY-puppetlabs
 
-keyring_file_name='sipwise-keyring-bootstrap.gpg'
-wget -O "${keyring_file_name}" https://deb.sipwise.com/spce/sipwise.gpg
+# write apt sources
+source_list_path='etc/apt/sources.list.d/sipwise.list'
+repo_addr="deb https://deb.debian.org/debian bookworm main"
+mkdir -p "${outside_fai_config}${source_list_path}"
+echo "${repo_addr}" > "${outside_fai_config}${source_list_path}/SIPWISE"
+
+# install apt keyring
+keyring_path="files/etc/apt/trusted.gpg.d/${keyring_file_name}/SIPWISE"
+mkdir -p "${outside_fai_config}"files/etc/apt/trusted.gpg.d/${keyring_file_name}
+wget -O "${outside_fai_config}"files/etc/apt/trusted.gpg.d/${keyring_file_name}/SIPWISE https://deb.sipwise.com/spce/keyring/sipwise-keyring-bootstrap.gpg
 
 # Workarounds to execute docker without privileged mode
 cat > "$(pwd)"/grml_build/adjust_fai.sh << EOF
@@ -51,16 +61,10 @@ echo "Finished execution of \$0"
 EOF
 chmod 775 "$(pwd)"/grml_build/adjust_fai.sh
 
-# old:
-#fai_config='/code/grml-live/etc/grml/fai/config'
-# new:
-fai_config='/code/grml-live/config/'
-keyring_path="${fai_config}/files/etc/apt/trusted.gpg.d/${keyring_file_name}/SIPWISE"
-puppet_key_path="${fai_config}/files/root/${puppet_key}/PUPPETLABS"
 iso_image_name="grml-sipwise-${osversion}-$(date +%Y%m%d_%H%M%S).iso"
 declare -a fai_debootstrap_opts=()
 fai_debootstrap_opts+=('--exclude=info,tasksel,tasksel-data')
-fai_debootstrap_opts+=("--keyring=${keyring_path}")
+fai_debootstrap_opts+=("--keyring=${fai_config}${keyring_path}")
 
 # starting with Debian/bookworm we need merged-/usr
 case "${osversion}" in
@@ -75,26 +79,15 @@ case "${osversion}" in
     ;;
 esac
 
+
 build_command=''
 build_command+="/grml/adjust_fai.sh"
-build_command+=" && cp '/deployment-iso/grml_build/package_config/SIPWISE' '${fai_config}/package_config/SIPWISE'"
-build_command+=" && cp '/deployment-iso/${source_list_path}/SIPWISE' '${fai_config}/files/${source_list_path}/'"
-build_command+=" && cp /deployment-iso/templates/scripts/keys/${keyring_file_name} '${keyring_path}'"
-case "${release}" in
-  [2-3].*|mr[3-6].*|mr7.[0-4]*)
-    echo "No need to add puppet key for release ${release}"
-  ;;
-  *)
-    build_command+=" && cp '/deployment-iso/grml_build/10-gpgkey' '${fai_config}/scripts/PUPPETLABS/'"
-    build_command+=" && cp '/deployment-iso/${puppet_key}' '${puppet_key_path}'"
-  ;;
-esac
+build_command+=" && cp -rv /grml/config/ /code/grml-live/"
 build_command+=" && GRML_NAME=grml64-small"
 build_command+=" FAI_ARGS='--verbose'"
 build_command+=" FAI_DEBOOTSTRAP='${osversion} https://deb.debian.org/debian'"
 build_command+=" FAI_DEBOOTSTRAP_OPTS='${fai_debootstrap_opts[*]}'"
-# FIXME ?
-#build_command+=" LIVE_CONF=/code/grml-live/etc/grml/grml-live.conf"
+build_command+=" LIVE_CONF=/code/grml-live/etc/grml/grml-live.conf"
 build_command+=" SCRIPTS_DIRECTORY=/code/grml-live/scripts"
 build_command+=" GRML_FAI_CONFIG=${fai_config}"
 build_command+=" ./grml-live"

@@ -47,14 +47,10 @@ RUN echo "SECURE_BOOT=disable ./grml-live -s bookworm -a amd64 -c GRMLBASE,SIPWI
 WORKDIR /code/
 #RUN git clone -b 'v0.47.7' --single-branch --depth 1 https://github.com/grml/grml-live
 RUN git clone --single-branch --depth 1 https://github.com/grml/grml-live
-RUN mkdir -p /code/grml-live/templates/boot/addons/ \
-  /code/grml-live/etc/grml/fai/config/files/etc/apt/sources.list.d/sipwise.list/ \
-  /code/grml-live/etc/grml/fai/config/files/etc/apt/trusted.gpg.d/sipwise-keyring.gpg/ \
-  /code/grml-live/etc/grml/fai/config/files/etc/apt/trusted.gpg.d/sipwise-keyring-bootstrap.gpg/ \
-  /code/grml-live/etc/grml/fai/config/files/root/puppet.gpg/ \
-  /code/grml-live/etc/grml/fai/config/scripts/PUPPETLABS/
 
 # addons
+RUN mkdir -p /code/grml-live/templates/boot/addons/
+
 RUN wget https://debian.sipwise.com/debian/pool/main/m/memtest86+/memtest86+_6.00-1_amd64.deb && \
   dpkg -x memtest86+_6.00-1_amd64.deb /tmp/memtest86 && \
   cp /tmp/memtest86/boot/memtest86+x64.bin /code/grml-live/templates/boot/addons/memtest86+x64.bin && \
